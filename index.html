@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Chatbot PTIT-FIT</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap">
+</head>
+<body>
+	<header>
+		<div class="logo">
+			<img src="logo.png" alt="Logo">
+			<span class="logo-title">WanderLust</span>
+		</div>	
+		<nav>
+			<ul>
+				<li><a href="#home" class="active">Home</a></li>
+				<li><a href="#map">About</a></li>
+				<li><a href="#booking">Booking</a></li>
+				<li><a href="#ticket">Ticket</a></li>
+			</ul>
+		</nav>
+		<div class="logo-container">
+			<div class="logo-ptit"><img src="ptit-logo-removebg-preview.png" alt="Logo-ptit"></div>
+			<div class="logo-ript"><img src="ript-removebg-preview.png" alt="Logo-ript"></div>	
+			<div class="logo-fit"><img src="fit-removebg-preview.png" alt="Logo-fit"></div>
+		</div>
+	</header>
+	<main>
+        <section class="hero" id="home">
+            <div class="content">
+                <h3>AI Tour Guide</h3>
+                <h1>Hanoi Traveling</h1>
+                <button class="chat-button" id="open-chatbot" onclick="animateButton()">
+					Chatbot Now!!!
+				</button>
+            </div>
+        </section>
+    </main>
+
+	<div class="chat-container" id="chatbot">
+		<div class="chat-sidebar" id="sidebar">
+			<button class="toggle-sidebar" onclick="toggleSidebar()">☰</button>
+			<button class="search-icon" onclick="toggleSearch()">
+				<i class='bx bx-search'></i>
+			</button>
+			<div class="history">
+				<div class="history-item">history 1</div>
+				<div class="history-item">history 2</div>
+				<div class="history-item">history 3</div>
+			
+			</div>
+		</div>
+
+		<div class="chat-main">			
+			<div class="chat-header">Travelling Hanoi
+				<button class="close-chat" onclick="toggleChat(false)">✖</button>
+			</div>
+			<div class="chat-body" id="chat-body">
+				<div class="bot-message message ">Hello! How can I help you?</div>
+			</div>
+
+			<div class="chat-footer">
+            	<input type="text" id="user-input" placeholder="Enter message..." onkeypress="sendMessage(event)">
+            	<button onclick="sendMessage()">
+            		<i class='bx bx-send'></i>
+            	</button>
+			</div>
+		</div>
+	</div>
+
+		
+
+</body>
+<script type="text/javascript" src="app.js"></script>
+</html>
