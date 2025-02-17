@@ -20,23 +20,23 @@ body {
 }
 @keyframes backgroundAnimation {
     0% {
-        background-image: url('hn1.avif');
+        background-image: url('hoan_kiem.jpg');
         opacity: 1;
     }
     25% {
-        background-image: url('hn2.jpg');
+        background-image: url('new.jpg');
         opacity: 1;
     }
     50%{
-    	background-image: url('hn3.avif');
+    	background-image: url('long_bien.jpg');
     	opacity: 1;
     }
     75%{
-    	background-image: url('hn4.avif');
+    	background-image: url('den.jpg');
     	opacity: 1;
     }
     100% {
-        background-image: url('hn5.avif');
+        background-image: url('tau.jpg');
         opacity: 1;
     }
 }
@@ -54,10 +54,10 @@ header {
     height: 47px;
 }
 .logo-ptit img{
-	height: 43px;
+	height: 47px;
 }
 .logo-ript img{
-	height: 39px;
+	height: 40px;
 }
 .logo-fit img{
 	height: 33px;
