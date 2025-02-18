@@ -24,7 +24,7 @@ body {
         opacity: 1;
     }
     25% {
-        background-image: url('new.jpg');
+        background-image: url('hoan_kiem.jpg');
         opacity: 1;
     }
     50%{
@@ -32,7 +32,7 @@ body {
     	opacity: 1;
     }
     75%{
-    	background-image: url('den.jpg');
+    	background-image: url('new.jpg');
     	opacity: 1;
     }
     100% {
@@ -114,8 +114,8 @@ main section {
 .chat-button{
 	position: absolute;
 	top: 51%;
-	left: 15.8%;
-	width: 175px;
+	left: 14.4%;
+	width: 120px;
 	height: 50px;
 	transform: translate(-50%, -50%);
 	font-size: 20px;
@@ -126,7 +126,7 @@ main section {
 }
 
 .chat-button:hover {
-	background: white;
+	background: #27a4f2;
 	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
