@@ -20,23 +20,23 @@ body {
 }
 @keyframes backgroundAnimation {
     0% {
-        background-image: url('hoan_kiem.jpg');
+        background-image: url('static/landing/hoan_kiem.jpg');
         opacity: 1;
     }
     25% {
-        background-image: url('new.jpg');
+        background-image: url('static/landing/new.jpg');
         opacity: 1;
     }
     50%{
-    	background-image: url('long_bien.jpg');
+    	background-image: url('static/landing/long_bien.jpg');
     	opacity: 1;
     }
     75%{
-    	background-image: url('den.jpg');
+    	background-image: url('static/landing/den.jpg');
     	opacity: 1;
     }
     100% {
-        background-image: url('tau.jpg');
+        background-image: url('static/landing/tau.jpg');
         opacity: 1;
     }
 }

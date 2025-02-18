@@ -6,11 +6,18 @@ import os
 from openai import OpenAI
 from dotenv import load_dotenv
 import json
+from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 
 app = FastAPI()
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 if not os.getenv("OPENAI_API_KEY"):
     print("Warning: OPENAI_API_KEY not found in environment variables")
