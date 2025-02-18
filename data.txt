@@ -1,0 +1,198 @@
+{
+    "attractions": [
+      {
+        "id": "ATT001",
+        "name": {
+          "en": "Hoan Kiem Lake",
+          "vi": "Hồ Hoàn Kiếm"
+        },
+        "category": "landmark",
+        "description": "Historic lake in the heart of Hanoi's Old Quarter, home to Turtle Tower and Ngoc Son Temple",
+        "location": {
+          "address": "Hoàn Kiếm District, Hanoi",
+          "coordinates": {
+            "lat": 21.0285,
+            "lng": 105.8524
+          }
+        },
+        "visiting_hours": {
+          "open": "00:00",
+          "close": "24:00"
+        },
+        "entrance_fee": {
+          "adult": "Free",
+          "child": "Free"
+        },
+        "best_time_to_visit": ["Early morning", "Late afternoon"],
+        "highlights": [
+          "Turtle Tower",
+          "The Huc Bridge",
+          "Ngoc Son Temple",
+          "Walking path around the lake"
+        ],
+        "tips": [
+          "Visit early morning to see locals doing exercise",
+          "Great for photography during sunset",
+          "Weekend walking street nearby"
+        ]
+      },
+      {
+        "id": "ATT002",
+        "name": {
+          "en": "Temple of Literature",
+          "vi": "Văn Miếu - Quốc Tử Giám"
+        },
+        "category": "historical",
+        "description": "Vietnam's first national university and an ancient Confucian temple",
+        "location": {
+          "address": "58 Quốc Tử Giám, Đống Đa, Hanoi",
+          "coordinates": {
+            "lat": 21.0293,
+            "lng": 105.8351
+          }
+        },
+        "visiting_hours": {
+          "open": "08:00",
+          "close": "17:00"
+        },
+        "entrance_fee": {
+          "adult": "30000 VND",
+          "child": "15000 VND"
+        },
+        "best_time_to_visit": ["Morning", "Weekdays"],
+        "highlights": [
+          "Ancient architecture",
+          "Imperial academy",
+          "Stone stellae of doctoral graduates",
+          "Traditional gardens"
+        ],
+        "tips": [
+          "Hire a guide for better historical context",
+          "Visit early to avoid crowds",
+          "Dress respectfully"
+        ]
+      }
+    ],
+    "food_spots": [
+      {
+        "id": "FOOD001",
+        "name": {
+          "en": "Pho Thin",
+          "vi": "Phở Thìn"
+        },
+        "category": "traditional",
+        "specialty": "Pho Bo (Beef Pho)",
+        "location": {
+          "address": "13 Lò Đúc, Hai Bà Trưng, Hanoi",
+          "coordinates": {
+            "lat": 21.0182,
+            "lng": 105.8534
+          }
+        },
+        "price_range": "40000-60000 VND",
+        "opening_hours": {
+          "open": "06:00",
+          "close": "20:30"
+        },
+        "popular_dishes": [
+          "Phở bò tái",
+          "Phở bò chín"
+        ],
+        "tips": [
+          "Expect queues during peak hours",
+          "Best to visit early morning",
+          "Cash only"
+        ]
+      }
+    ],
+    "accommodations": [
+      {
+        "id": "ACC001",
+        "name": "Sofitel Legend Metropole Hanoi",
+        "category": "luxury",
+        "location": {
+          "address": "15 Ngô Quyền, Hoàn Kiếm, Hanoi",
+          "coordinates": {
+            "lat": 21.0245,
+            "lng": 105.8567
+          }
+        },
+        "price_range": {
+          "from": "300 USD",
+          "to": "1000 USD"
+        },
+        "amenities": [
+          "Swimming pool",
+          "Spa",
+          "Multiple restaurants",
+          "Historical tours"
+        ],
+        "nearby_attractions": [
+          "Hoan Kiem Lake",
+          "Opera House",
+          "Old Quarter"
+        ]
+      }
+    ],
+    "transportation": [
+      {
+        "id": "TRANS001",
+        "type": "Bus",
+        "routes": [
+          {
+            "number": "86",
+            "name": "Airport Bus",
+            "from": "Noi Bai International Airport",
+            "to": "Hanoi Railway Station",
+            "price": "35000 VND",
+            "frequency": "30-45 minutes"
+          }
+        ],
+        "tips": [
+          "Buy ticket on the bus",
+          "Have exact change ready",
+          "Operates from 5:00 AM to 10:00 PM"
+        ]
+      },
+      {
+        "id": "TRANS002",
+        "type": "Grab/Be",
+        "description": "Popular ride-hailing apps in Hanoi",
+        "price_estimate": {
+          "base": "10000 VND",
+          "per_km": "12000-15000 VND"
+        },
+        "tips": [
+          "Download app before arriving",
+          "Save your hotel address in Vietnamese",
+          "Both cash and card payments accepted"
+        ]
+      }
+    ],
+    "events": [
+      {
+        "id": "EVT001",
+        "name": {
+          "en": "Mid-Autumn Festival",
+          "vi": "Tết Trung Thu"
+        },
+        "time": "15th day of 8th lunar month",
+        "locations": [
+          "Old Quarter",
+          "Hang Ma Street",
+          "Around Hoan Kiem Lake"
+        ],
+        "activities": [
+          "Lion dance performances",
+          "Traditional toy shopping",
+          "Moon cake tasting",
+          "Cultural shows"
+        ],
+        "tips": [
+          "Visit Hang Ma street for festival atmosphere",
+          "Book accommodation in advance",
+          "Try different types of moon cakes"
+        ]
+      }
+    ]
+  }
