@@ -17,6 +17,7 @@ body {
 	height: 100vh;
 	animation: backgroundAnimation 15s infinite alternate;
 	transition: opacity 1s ease-in-out;
+	z-index: 2;
 }
 @keyframes backgroundAnimation {
     0% {
@@ -40,6 +41,38 @@ body {
         opacity: 1;
     }
 }
+#about {
+    position: relative; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 50px;
+    background-image: url('duongpho.jpg'); 
+    background-size: cover;
+    background-position: center;
+    color: white;
+    overflow: hidden; 
+}
+
+#about::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); 
+    z-index: 1;
+}
+
+#destination{
+	background-color: #e2e2e2;
+}
+#booking{
+	background-color: #d3d3d3 ;
+}
+
 
 header {
     display: flex;
@@ -79,11 +112,17 @@ nav ul {
     display: flex;
     gap: 40px;
 }
+
 nav ul li a {
     text-decoration: none;
     color: black;
     font-weight: bold;
     font-size: 22px;
+    transition:0.3s ease-in-out;;
+}
+
+nav ul li a :hover {
+	text-decoration: underline;
 }
 main section {
     padding: 150px 10% 100px;
@@ -113,8 +152,8 @@ main section {
 
 .chat-button{
 	position: absolute;
-	top: 51%;
-	left: 14.4%;
+	top: 47%;
+	left: 14%;
 	width: 120px;
 	height: 50px;
 	transform: translate(-50%, -50%);
@@ -126,7 +165,7 @@ main section {
 }
 
 .chat-button:hover {
-	background: #27a4f2;
+	background: #e2e2e2;
 	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
@@ -317,4 +356,82 @@ main section {
 
 .chat-footer button:hover {
 	background: #555555;
+}
+
+.about-container {
+    display: flex;
+    max-width: 1200px;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+    z-index: 2; 
+    padding: 20px;
+}
+
+
+.section-title {
+    position: absolute;
+    top: 2px; 
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 3rem;
+    font-weight: bold;
+    color: white;
+    z-index: 3; 
+    text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8); 
+}
+.review {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+
+.review:hover {
+    transform: scale(1.05); 
+}
+
+.review img {
+    width: 10%;
+    max-width: 300px;
+    border-radius: 10px;
+}
+
+.review-text {
+    width: 50%;
+}
+
+.review-text h3 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+.review-text p {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.reverse {
+    flex-direction: row-reverse;
+}
+
+.rv2 img{
+	height: 150px;
+	width: 450px;
+	border-radius: 15px;
+}
+.rv1 img{
+	height: 150px;
+	width: 450px;
+	border-radius: 15px;
+}
+.rv3 img{
+	height: 150px;
+	width: 450px;
+	border-radius: 15px;
 }
