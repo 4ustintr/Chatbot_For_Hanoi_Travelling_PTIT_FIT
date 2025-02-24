@@ -130,7 +130,7 @@
         async function updatePrompt() {
             const prompt = document.getElementById('botPrompt').value;
             try {
-                const response = await fetch('/bot/prompt', {
+                const response = await fetch('http://localhost:8000/bot/prompt', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({prompt})
@@ -149,7 +149,7 @@
             formData.append('file', fileInput.files[0]);
 
             try {
-                const response = await fetch('/bot/upload', {
+                const response = await fetch('http://localhost:8000/bot/upload', {
                     method: 'POST',
                     body: formData
                 });
@@ -164,7 +164,7 @@
 
         async function loadFiles() {
             try {
-                const response = await fetch('/bot/files');
+                const response = await fetch('http://localhost:8000/bot/files');
                 const files = await response.json();
                 const fileList = document.getElementById('fileList');
                 fileList.innerHTML = '<h3>Uploaded Files:</h3>' + 
@@ -184,7 +184,7 @@
             messageInput.value = '';
 
             try {
-                const response = await fetch('/bot/chat', {
+                const response = await fetch('http://localhost:8000/bot/chat', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
@@ -243,17 +243,31 @@
 
         loadFiles();
 
-        // Add event listeners after all functions are defined
-        document.getElementById('messageInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
-
-        document.getElementById('sendButton').addEventListener('click', sendMessage);
+         const updatePromptButton = document.getElementById('updatePromptButton');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+    
+        if (messageInput) {
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        }
+    
+        if (sendButton) {
+            sendButton.addEventListener('click', sendMessage);
+        }
+    
+        if (updatePromptButton) {
+            updatePromptButton.addEventListener('click', updatePrompt);
+        } else {
+            console.error('Update prompt button not found in the DOM');
+        }
+  
         
         // Update other button handlers
-        document.getElementById('updatePromptButton').addEventListener('click', updatePrompt);
+        
         }); // Close DOMContentLoaded event listener
     </script>
 </body>
