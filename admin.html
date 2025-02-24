@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Travel Bot Manager</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px;
+        }
+        .section { 
+            margin-bottom: 30px; 
+            padding: 20px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px;
+        }
+        .chat-box {
+            height: 400px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            white-space: pre-line;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .user-message {
+            background-color: #e3f2fd;
+            margin-left: 20px;
+        }
+        .bot-message {
+            background-color: #f5f5f5;
+            margin-right: 20px;
+            line-height: 1.5;
+        }
+        .bot-message ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+        .bot-message li {
+            margin: 3px 0;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #fileList {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+        .error {
+            color: #ff0000;
+            margin: 10px 0;
+        }
+        .emoji {
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Travel Bot Manager</h1>
+    
+    <div class="section">
+        <h2>Bot Configuration</h2>
+        <textarea id="botPrompt" rows="4" placeholder="Enter bot prompt">You are a knowledgeable Hanoi travel assistant...</textarea>
+        <button id="updatePromptButton">Update Prompt</button>
+    </div>
+
+    <div class="section">
+        <h2>File Upload</h2>
+        <form id="uploadForm">
+            <input type="file" id="fileInput" accept=".txt,.pdf,.doc,.docx" />
+            <button type="submit">Upload</button>
+        </form>
+        <div id="fileList"></div>
+    </div>
+
+    <div class="section">
+        <h2>Chat</h2>
+        <div class="chat-box" id="chatBox"></div>
+        <div style="margin-bottom: 10px;">
+            <select id="languageSelect" style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+                <option value="en">English</option>
+                <option value="vi">Vietnamese</option>
+                <option value="ja">Japanese</option>
+            </select>
+        </div>
+        <input type="text" id="messageInput" placeholder="Type your message..." />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        function formatMessage(text) {
+            // Convert bullet points
+            text = text.replace(/^- (.+)$/gm, '• $1');
+            
+            // Preserve emojis and formatting
+            text = text.replace(/([🏷️📍💰⭐⏰🔍])/g, '<span class="emoji">$1</span>');
+            
+            // Convert markdown headers
+            text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            
+            return text;
+        }
+
+        async function updatePrompt() {
+            const prompt = document.getElementById('botPrompt').value;
+            try {
+                const response = await fetch('/bot/prompt', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({prompt})
+                });
+                const result = await response.json();
+                alert('Prompt updated successfully!');
+            } catch (error) {
+                alert('Error updating prompt: ' + error);
+            }
+        }
+
+        document.getElementById('uploadForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            const fileInput = document.getElementById('fileInput');
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const response = await fetch('/bot/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                alert('File uploaded successfully!');
+                loadFiles();
+                fileInput.value = '';
+            } catch (error) {
+                alert('Error uploading file: ' + error);
+            }
+        };
+
+        async function loadFiles() {
+            try {
+                const response = await fetch('/bot/files');
+                const files = await response.json();
+                const fileList = document.getElementById('fileList');
+                fileList.innerHTML = '<h3>Uploaded Files:</h3>' + 
+                    files.map(f => `<div>${f}</div>`).join('');
+            } catch (error) {
+                console.error('Error loading files:', error);
+            }
+        }
+
+        async function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const languageSelect = document.getElementById('languageSelect');
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            addMessageToChat('user', message);
+            messageInput.value = '';
+
+            try {
+                const response = await fetch('/bot/chat', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        message: message,
+                        language: languageSelect.value
+                    })
+                });
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                const messageDiv = createMessageDiv('bot');
+                let fullMessage = '';
+
+                while (true) {
+                    const {value, done} = await reader.read();
+                    if (done) break;
+                    
+                    const text = decoder.decode(value);
+                    const lines = text.split('\n');
+                    
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const data = JSON.parse(line.slice(5));
+                                fullMessage += data.response;
+                                messageDiv.innerHTML = formatMessage(fullMessage);
+                                messageDiv.scrollIntoView({behavior: 'smooth'});
+                            } catch (e) {
+                                console.error('Error parsing SSE data:', e);
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                addMessageToChat('bot', 'Error: ' + error);
+            }
+        }
+
+        function createMessageDiv(sender) {
+            const chatBox = document.getElementById('chatBox');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return messageDiv;
+        }
+
+        function addMessageToChat(sender, message) {
+            const messageDiv = createMessageDiv(sender);
+            if (sender === 'user') {
+                messageDiv.textContent = message;
+            } else {
+                messageDiv.innerHTML = formatMessage(message);
+            }
+        }
+
+        loadFiles();
+
+        // Add event listeners after all functions are defined
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        document.getElementById('sendButton').addEventListener('click', sendMessage);
+        
+        // Update other button handlers
+        document.getElementById('updatePromptButton').addEventListener('click', updatePrompt);
+        }); // Close DOMContentLoaded event listener
+    </script>
+</body>
+</html>

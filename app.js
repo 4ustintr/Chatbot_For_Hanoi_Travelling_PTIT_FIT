@@ -67,12 +67,6 @@ async function sendMessage(event) {
     document.getElementById("user-input").value = "";
     chatBody.scrollTop = chatBody.scrollHeight;
 
-    var loadingMessage = document.createElement("div");
-    loadingMessage.className = "bot-message message loading";
-    loadingMessage.textContent = "...";
-    chatBody.appendChild(loadingMessage);
-    chatBody.scrollTop = chatBody.scrollHeight;
-
     try {
         const response = await fetch('http://localhost:8000/bot/chat', {
             method: 'POST',
@@ -85,25 +79,40 @@ async function sendMessage(event) {
             })
         });
 
-        loadingMessage.remove();
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        const messageDiv = document.createElement("div");
+        messageDiv.className = "bot-message message";
+        chatBody.appendChild(messageDiv);
+        let fullMessage = '';
 
-        const data = await response.json();
-        
-        var botMessage = document.createElement("div");
-        botMessage.className = "bot-message message";
-        botMessage.innerHTML = formatMessage(data.response);
-        chatBody.appendChild(botMessage);
-        chatBody.scrollTop = chatBody.scrollHeight;
-
+        while (true) {
+            const {value, done} = await reader.read();
+            if (done) break;
+            
+            const text = decoder.decode(value);
+            const lines = text.split('\n');
+            
+            for (const line of lines) {
+                if (line.startsWith('data: ')) {
+                    try {
+                        const data = JSON.parse(line.slice(5));
+                        fullMessage += data.response;
+                        messageDiv.innerHTML = formatMessage(fullMessage);
+                        chatBody.scrollTop = chatBody.scrollHeight;
+                    } catch (e) {
+                        console.error('Error parsing SSE data:', e);
+                    }
+                }
+            }
+        }
     } catch (error) {
-        loadingMessage.remove();
-        
-        console.error('Error:', error);
-        var botMessage = document.createElement("div");
-        botMessage.className = "bot-message message error";
-        botMessage.textContent = "Sorry, I encountered an error while processing your message.";
-        chatBody.appendChild(botMessage);
+        var errorMessage = document.createElement("div");
+        errorMessage.className = "bot-message message error";
+        errorMessage.textContent = "Sorry, I encountered an error while processing your message.";
+        chatBody.appendChild(errorMessage);
         chatBody.scrollTop = chatBody.scrollHeight;
+        console.error('Error:', error);
     }
 }
 
