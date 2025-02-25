@@ -124,22 +124,19 @@
     </footer>
 
 	<div class="chat-container" id="chatbot">
-		<div class="chat-sidebar" id="sidebar">
-			<button class="toggle-sidebar" onclick="toggleSidebar()">☰</button>
-			<button class="search-icon" onclick="toggleSearch()">
-				<i class='bx bx-search'></i>
-			</button>
-			<div class="languageSelect" style="margin-bottom: 10px;">
-				<select id="languageSelect" style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
-					<option value="en">English</option>
-    <option value="vi">Tiếng Việt</option>
-    <option value="ja">日本語</option>
-				</select>
-			</div>
-		</div>
-
 		<div class="chat-main">			
-			<div class="chat-header">Let me help you explore Hanoi !
+			<div class="chat-header">Let me help you explore Hanoi !			
+				<div class="chat-logo-container">
+					<img src="static/landingpage/logo.png" alt="Chatbot Logo" class="chat-logo">
+        			<span class="chat-logo-text">WanderLust</span>
+    			</div>
+				<div class="languageSelect">
+		        	<select id="languageSelect">
+		            	<option value="en">English</option>
+		            	<option value="vi">Tiếng Việt</option>
+		            	<option value="ja">日本語</option>
+		        	</select>
+	    		</div>	
 				<button class="close-chat" onclick="toggleChat(false)">✖</button>
 			</div>
 			<div class="chat-body" id="chat-body">
@@ -155,8 +152,7 @@
 		</div>
 	</div>
 
-		
-
 </body>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script type="text/javascript" src="app.js"></script>
 </html>

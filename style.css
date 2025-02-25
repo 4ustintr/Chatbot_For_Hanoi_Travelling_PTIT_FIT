@@ -246,8 +246,6 @@ footer {
 	font-size: 26px;
 }
 
-
-
 header {
     display: flex;
     justify-content: space-between;
@@ -673,4 +671,56 @@ main section {
     height: 300px;
     border-radius: 8px;
     margin-top: 15px;
+}
+
+#languageSelect{
+	background: white;
+	border-radius: 15px;
+	font-family: 'Montserrat', sans-serif;
+	margin-top: 20px;
+	font-size: 15px;
+}
+
+.chat-logo-container {
+    position: fixed;
+    top: 26px;
+    left: 26px;
+    display: flex;
+    align-items: center	;
+    z-index: 1100;
+}
+
+.chat-logo {
+    width: 45px;
+    height: auto;
+    filter: invert(1);
+}
+
+.chat-logo-text {
+    margin-left: 10px;
+    font-size: 25px;
+    font-weight: bold;
+    color: white;
+    font-family: "Quicksand", sans-serif;
+}
+.markdown-content {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+}
+
+.markdown-content ul, 
+.markdown-content ol {
+    padding-left: 2em;
+    margin: 0.5em 0;
+}
+
+.markdown-content li {
+    margin-left: 1em;
+    position: relative;
+}
+
+.bot-message {
+    max-width: 100%;
+    padding: 10px 15px;
 }

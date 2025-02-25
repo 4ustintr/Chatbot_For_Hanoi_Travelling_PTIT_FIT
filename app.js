@@ -198,32 +198,42 @@ async function sendMessage(event) {
                 language: languageSelect.value
             })
         });
-
+    
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         const messageDiv = document.createElement("div");
         messageDiv.className = "bot-message message";
         chatBody.appendChild(messageDiv);
         let fullMessage = '';
-
-        while (true) {
-            const {value, done} = await reader.read();
-            if (done) break;
-            
-            const text = decoder.decode(value);
-            const lines = text.split('\n');
-            for (const line of lines) {
-                if (line.startsWith('data: ')) {
-                    try {
-                        const data = JSON.parse(line.slice(5));
-                        fullMessage += data.response;
-                        messageDiv.innerHTML = formatMessage(fullMessage);
-                        chatBody.scrollTop = chatBody.scrollHeight;
-                    } catch (e) {
-                        console.error('Error parsing SSE data:', e);
+    
+        try {
+            while (true) {
+                const {value, done} = await reader.read();
+                if (done) break;
+                
+                const text = decoder.decode(value);
+                const lines = text.split('\n');
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        const jsonContent = JSON.parse(line.slice(6));
+                        
+                        if (jsonContent.complete) {
+                            fullMessage = jsonContent.response;
+                        } else if (jsonContent.response) {
+                            fullMessage += jsonContent.response;
+                        }
+                        
+                        messageDiv.innerHTML = window.marked ? 
+                            window.marked.parse(fullMessage) : 
+                            fullMessage;
+                            messageDiv.classList.add('markdown-content');
                     }
                 }
             }
+        } catch (error) {
+            console.error('Error reading stream:', error);
+        } finally {
+            reader.releaseLock(); 
         }
     } catch (error) {
         var errorMessage = document.createElement("div");
