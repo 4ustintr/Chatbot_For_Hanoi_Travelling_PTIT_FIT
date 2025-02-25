@@ -41,11 +41,10 @@ function formatMessage(text) {
     return text;
 }
 
-let currentLanguage = 'en';
 
 function updateLanguage() {
-    const select = document.getElementById('languageSelect');
-    currentLanguage = select.value;
+    
+    currentLanguage = languageSelect.value;
     
     const input = document.getElementById('user-input');
     switch(currentLanguage) {
@@ -109,18 +108,34 @@ function createDestinationPopup(title, description, coordinates, imageUrl) {
             L.marker(userLocation).addTo(map)
                 .bindPopup('Your Location')
                 .openPopup();
-            
+                waypoints: [
+                    L.latLng(userLocation),
+                    L.latLng(coordinates)
+                ],
             L.Routing.control({
                 waypoints: [
                     L.latLng(userLocation),
                     L.latLng(coordinates)
                 ],
-                routeWhileDragging: true
+                routeWhileDragging: true,
+                showAlternatives: false,
+                show: false,
+                collapsible: true,
+                lineOptions: {
+                styles: [
+                    {color: 'blue', opacity: 0.6, weight: 4}
+                ]
+                }
             }).addTo(map);
         });
     }
 }
+const languageSelect = document.getElementById('languageSelect');
+languageSelect.addEventListener('change', updateLanguage);
 
+document.addEventListener('DOMContentLoaded', () => {
+    updateLanguage();
+});
 document.addEventListener('DOMContentLoaded', () => {
     const destinations = {
         'Hoan Kiem Lake': {
@@ -180,7 +195,7 @@ async function sendMessage(event) {
             },
             body: JSON.stringify({
                 message: userInput,
-                language: currentLanguage
+                language: languageSelect.value
             })
         });
 
