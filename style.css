@@ -712,7 +712,7 @@ main section {
 .markdown-content ul, 
 .markdown-content ol {
     padding-left: 2em;
-    margin: 0.5em 0;
+    margin: -1.5rem 0;
 }
 
 .markdown-content li {

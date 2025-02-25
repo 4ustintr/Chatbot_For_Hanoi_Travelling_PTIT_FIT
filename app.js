@@ -223,17 +223,59 @@ async function sendMessage(event) {
                             fullMessage += jsonContent.response;
                         }
                         
-                        messageDiv.innerHTML = window.marked ? 
-                            window.marked.parse(fullMessage) : 
+                        messageDiv.innerHTML = window.marked ?
+                            window.marked.parse(fullMessage) :
                             fullMessage;
-                            messageDiv.classList.add('markdown-content');
+                        messageDiv.classList.add('markdown-content');
                     }
                 }
             }
         } catch (error) {
             console.error('Error reading stream:', error);
         } finally {
-            reader.releaseLock(); 
+            reader.releaseLock();
+                        const coordsMatch = fullMessage.match(/GPS Coordinates: (-?\d+\.\d+), (-?\d+\.\d+)/);
+            if (coordsMatch) {
+                const lat = parseFloat(coordsMatch[1]);
+                const lng = parseFloat(coordsMatch[2]);
+                const mapContainer = document.createElement('div');
+                mapContainer.style.height = '300px';
+                mapContainer.style.marginTop = '10px';
+                messageDiv.appendChild(mapContainer);
+                
+                const map = L.map(mapContainer).setView([lat, lng], 15);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+                
+                L.marker([lat, lng]).addTo(map);
+                
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition((position) => {
+                        const userLocation = [position.coords.latitude, position.coords.longitude];
+                        
+                        L.marker(userLocation).addTo(map)
+                            .bindPopup('Your Location')
+                            .openPopup();
+                        
+                        L.Routing.control({
+                            waypoints: [
+                                L.latLng(userLocation),
+                                L.latLng([lat, lng])
+                            ],
+                            routeWhileDragging: true,
+                            showAlternatives: false,
+                            show: false,
+                            collapsible: true,
+                            lineOptions: {
+                                styles: [{color: 'blue', opacity: 0.6, weight: 4}]
+                            }
+                        }).addTo(map);
+                    });
+                }
+                
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }
         }
     } catch (error) {
         var errorMessage = document.createElement("div");

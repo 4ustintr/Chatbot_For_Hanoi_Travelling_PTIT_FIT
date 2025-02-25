@@ -31,7 +31,9 @@ UPLOADS_DIR.mkdir(exist_ok=True)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
-BOT_CONFIG = {
+CONFIG_FILE = Path("bot_config.json")
+
+DEFAULT_CONFIG = {
     "name": "Travel Assistant",
     "prompt": """You are a multilingual Hanoi travel assistant. You can respond in English, Vietnamese, and Japanese. When answering questions, respond in the user's selected language and structure your response in the following format:
 Require response type markdown
@@ -39,6 +41,7 @@ Require response type markdown
 - Brief summary of the topic/place (2-3 sentences)
 
 📍 LOCATION & ACCESS/場所とアクセス/ĐỊA ĐIỂM & CÁCH ĐI:
+- GPS Coordinates: [latitude, longitude] format(This section does not change the language of GPS Coordinates)
 - Address (if applicable)
 - How to get there
 - Best time to visit
@@ -65,6 +68,20 @@ Require response type markdown
 Always provide accurate, up-to-date information about Hanoi. Keep responses concise but informative. If you're unsure about specific details, mention that information may need verification. Use a friendly, helpful tone. Respond entirely in the language specified by the user's selection (English, Vietnamese, or Japanese). """,
     "files": []
 }
+
+def load_config():
+    if CONFIG_FILE.exists():
+        with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
+        json.dump(DEFAULT_CONFIG, f, indent=2, ensure_ascii=False)
+    return DEFAULT_CONFIG
+
+def save_config(config):
+    with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
+        json.dump(config, f, indent=2, ensure_ascii=False)
+
+BOT_CONFIG = load_config()
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_panel():
     return FileResponse("admin.html")
@@ -85,6 +102,7 @@ async def upload_file(file: UploadFile):
             content = await file.read()
             f.write(content)
         BOT_CONFIG["files"].append(file.filename)
+        save_config(BOT_CONFIG)
         return {"status": "success", "filename": file.filename}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -100,6 +118,7 @@ async def get_prompt():
 @app.post("/bot/prompt")
 async def update_prompt(prompt: dict):
     BOT_CONFIG["prompt"] = prompt["prompt"]
+    save_config(BOT_CONFIG)
     return {"status": "success"}
 
 @app.post("/bot/api-key")
@@ -135,7 +154,7 @@ async def chat(message: dict):
         ]
 
         completion = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=messages,
             temperature=0.3,
             max_tokens=800,
