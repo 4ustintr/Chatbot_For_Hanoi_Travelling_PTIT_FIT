@@ -113,19 +113,16 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-        function formatMessage(text) {
-            // Convert bullet points
-            text = text.replace(/^- (.+)$/gm, '• $1');
-            
-            // Preserve emojis and formatting
-            text = text.replace(/([🏷️📍💰⭐⏰🔍])/g, '<span class="emoji">$1</span>');
-            
-            // Convert markdown headers
-            text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-            
-            return text;
-        }
+       document.addEventListener('DOMContentLoaded', function() {
+           function formatMessage(text) {
+               text = text.replace(/^- (.+)$/gm, '• $1');
+               
+               text = text.replace(/([🏷️📍💰⭐⏰🔍])/g, '<span class="emoji">$1</span>');
+               
+               text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+               
+               return text;
+           }
 
         async function updatePrompt() {
             const prompt = document.getElementById('botPrompt').value;
@@ -241,34 +238,31 @@
             }
         }
 
-        loadFiles();
+           loadFiles();
 
-         const updatePromptButton = document.getElementById('updatePromptButton');
-        const messageInput = document.getElementById('messageInput');
-        const sendButton = document.getElementById('sendButton');
-    
-        if (messageInput) {
-            messageInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    sendMessage();
-                }
-            });
-        }
-    
-        if (sendButton) {
-            sendButton.addEventListener('click', sendMessage);
-        }
-    
-        if (updatePromptButton) {
-            updatePromptButton.addEventListener('click', updatePrompt);
-        } else {
-            console.error('Update prompt button not found in the DOM');
-        }
-  
-        
-        // Update other button handlers
-        
-        }); // Close DOMContentLoaded event listener
+           const updatePromptButton = document.getElementById('updatePromptButton');
+           const messageInput = document.getElementById('messageInput');
+           const sendButton = document.getElementById('sendButton');
+       
+           if (messageInput) {
+               messageInput.addEventListener('keypress', (e) => {
+                   if (e.key === 'Enter') {
+                       sendMessage();
+                   }
+               });
+           }
+       
+           if (sendButton) {
+               sendButton.addEventListener('click', sendMessage);
+           }
+       
+           if (updatePromptButton) {
+               updatePromptButton.addEventListener('click', updatePrompt);
+           } else {
+               console.error('Update prompt button not found in the DOM');
+           }
+           
+       }); 
     </script>
 </body>
 </html>

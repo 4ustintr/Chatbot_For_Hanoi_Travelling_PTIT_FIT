@@ -19,6 +19,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+print(os.getenv("OPENAI_API_KEY"))
 if not os.getenv("OPENAI_API_KEY"):
     print("Warning: OPENAI_API_KEY not found in environment variables")
 
@@ -29,10 +30,11 @@ UPLOADS_DIR.mkdir(exist_ok=True)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+
 BOT_CONFIG = {
     "name": "Travel Assistant",
     "prompt": """You are a multilingual Hanoi travel assistant. You can respond in English, Vietnamese, and Japanese. When answering questions, respond in the user's selected language and structure your response in the following format:
-
+Require response type markdown
 🏷️ OVERVIEW/概要/TỔNG QUAN:
 - Brief summary of the topic/place (2-3 sentences)
 
@@ -60,12 +62,9 @@ BOT_CONFIG = {
 - Local customs to note
 - Nearby attractions
 
-Always provide accurate, up-to-date information about Hanoi. Keep responses concise but informative. If you're unsure about specific details, mention that information may need verification. Use a friendly, helpful tone. Respond entirely in the language specified by the user's selection (English, Vietnamese, or Japanese).""",
+Always provide accurate, up-to-date information about Hanoi. Keep responses concise but informative. If you're unsure about specific details, mention that information may need verification. Use a friendly, helpful tone. Respond entirely in the language specified by the user's selection (English, Vietnamese, or Japanese). """,
     "files": []
 }
-
-
-
 @app.get("/admin", response_class=HTMLResponse)
 async def admin_panel():
     return FileResponse("admin.html")
@@ -122,12 +121,12 @@ async def chat(message: dict):
     try:
         language = message.get("language", "en")
         lang_instruction = ""
-        if language == "ja":
-            lang_instruction = "Respond in Japanese language."
+        if language == "en":
+            lang_instruction = "Respond in English language."
         elif language == "vi":
             lang_instruction = "Respond in Vietnamese language."
         else:
-            lang_instruction = "Respond in English language."
+            lang_instruction = "Respond in Japanese language."
 
         messages = [
             {"role": "system", "content": BOT_CONFIG["prompt"]},

@@ -24,11 +24,19 @@ function toggleChat(open) {
 }
 
 function formatMessage(text) {
+    text = text.replace(/\n/g, '<br>');
+    
+    text = text.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+    text = text.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+    text = text.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+    
     text = text.replace(/^- (.+)$/gm, '• $1');
     
-    text = text.replace(/([🏷️📍💰⭐⏰🔍])/g, '<span class="emoji">$1</span>');
-    
     text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    
+    text = text.replace(/\_(.+?)\_/g, '<em>$1</em>');
+    
+    text = text.replace(/([🏷️📍💰⭐⏰🔍])/g, '<span class="emoji">$1</span>');
     
     return text;
 }
@@ -51,6 +59,103 @@ function updateLanguage() {
             input.placeholder = 'Type your message...';
     }
 }
+
+function createDestinationPopup(title, description, coordinates, imageUrl) {
+    const popup = document.createElement('div');
+    popup.className = 'destination-popup';
+    
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'popup-close';
+    closeBtn.innerHTML = '×';
+    closeBtn.onclick = () => popup.remove();
+    
+    const content = document.createElement('div');
+    content.className = 'popup-content';
+    
+    const titleElem = document.createElement('h2');
+    titleElem.textContent = title;
+    
+    const descElem = document.createElement('p');
+    descElem.textContent = description;
+    
+    const image = document.createElement('img');
+    image.src = imageUrl;
+    image.className = 'popup-image';
+    
+    const mapContainer = document.createElement('div');
+    mapContainer.id = 'map';
+    mapContainer.style.height = '300px';
+    
+    content.appendChild(titleElem);
+    content.appendChild(image);
+    content.appendChild(descElem);
+    content.appendChild(mapContainer);
+    popup.appendChild(closeBtn);
+    popup.appendChild(content);
+    
+    document.body.appendChild(popup);
+    
+    const map = L.map('map').setView(coordinates, 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    L.marker(coordinates).addTo(map);
+    
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+            const userLocation = [position.coords.latitude, position.coords.longitude];
+            
+            L.marker(userLocation).addTo(map)
+                .bindPopup('Your Location')
+                .openPopup();
+            
+            L.Routing.control({
+                waypoints: [
+                    L.latLng(userLocation),
+                    L.latLng(coordinates)
+                ],
+                routeWhileDragging: true
+            }).addTo(map);
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const destinations = {
+        'Hoan Kiem Lake': {
+            coordinates: [21.0285, 105.8522],
+            description: 'A historic heart of Hanoi with the iconic Turtle Tower.',
+            image: 'static/landingpage/hgdes.jpg'
+        },
+        'Long Bien Bridge': {
+            coordinates: [21.0435, 105.8508],
+            description: 'Historic bridge spanning the Red River, built during French colonial period.',
+            image: 'static/landingpage/long_bien.jpg'
+        },
+        'The Temple of Literature': {
+            coordinates: [21.0293, 105.8354],
+            description: 'Vietnam\'s first national university, dating back to 1070.',
+            image: 'static/landingpage/vmdes.jpg'
+        },
+        'Hanoi Old Quarter': {
+            coordinates: [21.0338, 105.8500],
+            description: 'Historic heart of Hanoi, featuring 36 streets of traditional crafts and commerce.',
+            image: 'static/landingpage/pcdes.jpg'
+        }
+    };
+
+    const cards = document.querySelectorAll('.destination-card');
+    cards.forEach(card => {
+        card.addEventListener('click', () => {
+            const title = card.querySelector('h3').textContent;
+            const dest = destinations[title];
+            if (dest) {
+                createDestinationPopup(title, dest.description, dest.coordinates, dest.image);
+            }
+        });
+    });
+});
 
 async function sendMessage(event) {
     if (event && event.key !== "Enter") return;
@@ -92,7 +197,6 @@ async function sendMessage(event) {
             
             const text = decoder.decode(value);
             const lines = text.split('\n');
-            
             for (const line of lines) {
                 if (line.startsWith('data: ')) {
                     try {
@@ -115,60 +219,3 @@ async function sendMessage(event) {
         console.error('Error:', error);
     }
 }
-
-function initializeFileUpload() {
-    const uploadForm = document.createElement('form');
-    uploadForm.id = 'uploadForm';
-    uploadForm.style.display = 'none';
-    uploadForm.innerHTML = `
-        <input type="file" id="fileInput" accept=".txt,.pdf,.doc,.docx" />
-    `;
-    document.body.appendChild(uploadForm);
-
-    uploadForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const formData = new FormData();
-        const fileInput = document.getElementById('fileInput');
-        formData.append('file', fileInput.files[0]);
-
-        try {
-            const response = await fetch('http://localhost:8000/bot/upload', {
-                method: 'POST',
-                body: formData
-            });
-            const result = await response.json();
-            console.log('File uploaded successfully:', result);
-            loadFiles();
-            fileInput.value = '';
-        } catch (error) {
-            console.error('Error uploading file:', error);
-        }
-    });
-}
-
-async function loadFiles() {
-    try {
-        const response = await fetch('http://localhost:8000/bot/files');
-        const files = await response.json();
-        const history = document.querySelector('.history');
-        history.innerHTML = files.length ? 
-            files.map(file => `<div class="history-item">${file}</div>`).join('') :
-            '<div class="history-item">No files uploaded</div>';
-    } catch (error) {
-        console.error('Error loading files:', error);
-    }
-}
-
-function toggleSidebar() {
-    document.getElementById("sidebar").classList.toggle("expanded");
-}
-
-function toggleSearch() {
-    alert("Search functionality coming soon!");
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    initializeFileUpload();
-    loadFiles();
-    updateLanguage(); 
-});
