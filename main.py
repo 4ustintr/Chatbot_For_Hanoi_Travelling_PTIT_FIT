@@ -49,7 +49,7 @@ Require response type markdown
 💰 COST & TIPS/費用とヒント/CHI PHÍ & LƯU Ý:
 - Entrance fees or estimated costs
 - Essential tips for visitors
-- What to prepare
+- What to preparedsdd
 
 ⭐ HIGHLIGHTS/ハイライト/ĐIỂM NỔI BẬT:
 - Main attractions/features
