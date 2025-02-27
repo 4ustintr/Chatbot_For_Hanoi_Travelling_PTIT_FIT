@@ -8,7 +8,69 @@ from dotenv import load_dotenv
 import json
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-load_dotenv()  
+import requests
+from urllib.parse import quote
+import re
+load_dotenv()
+
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+GOOGLE_CSE_ID = os.getenv("GOOGLE_CSE_ID")
+
+def extract_location_name(text):
+    address_patterns = [
+        r"Address:[\s\n]*([^,\n]+?)(?:,|\n|$)", 
+        r"Địa chỉ:[\s\n]*([^,\n]+?)(?:,|\n|$)",  
+        r"住所:[\s\n]*([^,\n]+?)(?:,|\n|$)"      
+    ]
+    
+    for pattern in address_patterns:
+        match = re.search(pattern, text, re.IGNORECASE | re.MULTILINE)
+        if match:
+            location = match.group(1).strip()
+            if location.lower() in ["hanoi", "hanoi, vietnam", "hà nội", "hà nội, việt nam"]:
+                gps_pattern = r"GPS Coordinates:.*\n.*?([^,\n]+?)(?:,|\n|$)"
+                gps_match = re.search(gps_pattern, text, re.IGNORECASE | re.MULTILINE)
+                if gps_match:
+                    gps_location = gps_match.group(1).strip()
+                    if gps_location and not gps_location.lower() in ["hanoi", "hà nội"]:
+                        location = gps_location
+            return location
+            
+    return None
+
+def get_location_images(location_name, num_images=3):
+    try:
+        if not location_name:
+            return []
+        
+        location = location_name.strip()
+        
+        generic_terms = ["hanoi", "vietnam", "hà nội", "việt nam", "hànội"]
+        location_parts = location.lower().split(',')
+        location = location_parts[0].strip()
+        
+        if location.lower() in generic_terms:
+            return []
+            
+        search_query = f"{location}"
+        if "hanoi" not in location.lower() and "hà nội" not in location.lower():
+            search_query += " Hanoi"
+            
+        search_query += " landmark tourist attraction"
+        
+        print(f"Searching for images with query: {search_query}")  
+        
+        encoded_query = quote(search_query)
+        url = f"https://www.googleapis.com/customsearch/v1?q={encoded_query}&key={GOOGLE_API_KEY}&cx={GOOGLE_CSE_ID}&searchType=image&num={num_images}"
+        response = requests.get(url)
+        data = response.json()
+        
+        if 'items' in data:
+            return [item['link'] for item in data['items']]
+        return []
+    except Exception as e:
+        print(f"Error fetching images: {e}")
+        return []
 
 app = FastAPI()
 app.add_middleware(
@@ -19,7 +81,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-print(os.getenv("OPENAI_API_KEY"))
 if not os.getenv("OPENAI_API_KEY"):
     print("Warning: OPENAI_API_KEY not found in environment variables")
 
@@ -167,9 +228,24 @@ async def chat(message: dict):
                 if chunk.choices[0].delta.content is not None:
                     content = chunk.choices[0].delta.content
                     collected_response += content
+                    
                     yield f"data: {json.dumps({'response': content, 'complete': False})}\n\n"
-                await asyncio.sleep(0.05)  
-            yield f"data: {json.dumps({'response': collected_response, 'complete': True})}\n\n"
+                await asyncio.sleep(0.05)
+            
+            location_name = extract_location_name(collected_response)
+            if location_name:
+                print(f"Extracted location: {location_name}")  
+                
+                if ',' in location_name:
+             
+                    location_name = location_name.split(',')[0].strip()
+                    print(f"Using first location: {location_name}")
+                images = get_location_images(location_name)
+                print(f"Found {len(images)} images for {location_name}")
+            else:
+                print("No location found in response")  
+                images = []
+            yield f"data: {json.dumps({'response': collected_response, 'complete': True, 'images': images})}\n\n"
 
         return StreamingResponse(generate(), media_type="text/event-stream")
     except Exception as e:
