@@ -144,10 +144,13 @@
 			</div>
 
 			<div class="chat-footer">
-            	<input type="text" id="user-input" placeholder="Enter message..." onkeypress="sendMessage(event)">
-            	<button onclick="sendMessage()">
-            		<i class='bx bx-send'></i>
-            	</button>
+			            <input type="text" id="user-input" placeholder="Enter message..." onkeypress="sendMessage(event)">
+			            <button id="voice-record-btn" onclick="toggleVoiceRecording()">
+			                <i class='bx bx-microphone'></i>
+			            </button>
+			            <button onclick="sendMessage()">
+			                <i class='bx bx-send'></i>
+			            </button>
 			</div>
 		</div>
 	</div>

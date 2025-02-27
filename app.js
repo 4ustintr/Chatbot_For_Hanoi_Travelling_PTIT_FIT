@@ -172,6 +172,74 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+let recognition;
+let isRecording = false;
+
+function toggleVoiceRecording() {
+    const recordBtn = document.getElementById('voice-record-btn');
+    const micIcon = recordBtn.querySelector('i');
+    const userInput = document.getElementById('user-input');
+
+    if (!recognition) {
+        recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        
+        recognition.onstart = () => {
+            isRecording = true;
+            micIcon.className = 'bx bx-stop-circle';
+            recordBtn.style.color = 'red';
+            userInput.placeholder = 'Listening...';
+        };
+
+        recognition.onresult = (event) => {
+            let finalTranscript = '';
+            let interimTranscript = '';
+
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                const transcript = event.results[i][0].transcript;
+                if (event.results[i].isFinal) {
+                    finalTranscript += transcript;
+                } else {
+                    interimTranscript += transcript;
+                }
+            }
+
+            userInput.value = finalTranscript || interimTranscript;
+        };
+
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error:', event.error);
+            stopRecording();
+        };
+
+        recognition.onend = () => {
+            stopRecording();
+        };
+    }
+
+    if (!isRecording) {
+        recognition.start();
+    } else {
+        stopRecording();
+        if (userInput.value.trim()) {
+            sendMessage();
+        }
+    }
+}
+
+function stopRecording() {
+    if (recognition) {
+        recognition.stop();
+    }
+    isRecording = false;
+    const recordBtn = document.getElementById('voice-record-btn');
+    const micIcon = recordBtn.querySelector('i');
+    micIcon.className = 'bx bx-microphone';
+    recordBtn.style.color = '';
+    document.getElementById('user-input').placeholder = 'Enter message...';
+}
+
 async function sendMessage(event) {
     if (event && event.key !== "Enter") return;
 
