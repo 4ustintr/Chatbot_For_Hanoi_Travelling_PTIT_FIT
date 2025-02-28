@@ -219,12 +219,11 @@ function toggleVoiceRecording() {
     }
 
     if (!isRecording) {
+        
+        userInput.value = '';
         recognition.start();
     } else {
         stopRecording();
-        if (userInput.value.trim()) {
-            sendMessage();
-        }
     }
 }
 
@@ -237,7 +236,10 @@ function stopRecording() {
     const micIcon = recordBtn.querySelector('i');
     micIcon.className = 'bx bx-microphone';
     recordBtn.style.color = '';
-    document.getElementById('user-input').placeholder = 'Enter message...';
+    const userInput = document.getElementById('user-input');
+    userInput.placeholder = 'Enter message...';
+    
+    userInput.focus();
 }
 
 async function sendMessage(event) {
@@ -287,7 +289,7 @@ async function sendMessage(event) {
                         
                         if (jsonContent.complete) {
                             fullMessage = jsonContent.response;
-                            // Store the complete response data for later use
+                          
                             window.lastJsonContent = jsonContent;
                         } else if (jsonContent.response) {
                             fullMessage += jsonContent.response;
@@ -347,7 +349,7 @@ async function sendMessage(event) {
                 chatBody.scrollTop = chatBody.scrollHeight;
             }
 
-            // Add images after the map if they exist in the complete response
+            
             if (window.lastJsonContent && window.lastJsonContent.images && window.lastJsonContent.images.length > 0) {
                 const imageGallery = document.createElement('div');
                 imageGallery.className = 'image-gallery';
@@ -363,8 +365,7 @@ async function sendMessage(event) {
                     img.onerror = () => {
                         imgContainer.remove();
                     };
-                    
-                    // Add click handler to show image popup
+              
                     img.onclick = () => {
                         createImagePopup(imageUrl);
                     };
@@ -388,12 +389,12 @@ function createImagePopup(imageUrl) {
     overlay.appendChild(img);
     document.body.appendChild(overlay);
     
-    // Click anywhere (including the image) to close
+   
     overlay.addEventListener('click', () => {
         overlay.remove();
     });
 }
-            // Clean up the stored response data
+         
             window.lastJsonContent = null;
         }
     } catch (error) {
